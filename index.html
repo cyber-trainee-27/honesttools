@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Honest Utils and Tools | 100% Free & Local</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="./css/output.css" rel="stylesheet">
+    <!--<script src="https://cdn.tailwindcss.com"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
@@ -36,6 +37,12 @@
                 </button>
                 <button onclick="switchTab('text-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="type" class="mr-3 w-5 h-5"></i> Dummy Text
+                </button>
+                <button onclick="switchTab('image-compressor')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="image" class="w-5 h-5 mr-3"></i> Image Compressor
+                </button>
+                <button onclick="switchTab('word-counter')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Word Counter
                 </button>
             </nav>
         </aside>
@@ -130,6 +137,141 @@
                     <button onclick="generateText()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">Generate</button>
                 </div>
                 <textarea id="text-output" rows="8" class="w-full p-4 text-gray-700 border border-gray-300 rounded-lg outline-none bg-gray-50" readonly></textarea>
+            </div>
+
+            <!-- Word Counter Tab -->
+            <div id="word-counter" class="tab-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Word & Character Counter</h2>
+                    
+                    <!-- Live Stats Bar -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4 text-center">
+                            <div id="count-words" class="text-3xl font-bold text-blue-600">0</div>
+                            <div class="text-sm text-gray-500 font-medium">Words</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4 text-center">
+                            <div id="count-chars" class="text-3xl font-bold text-green-600">0</div>
+                            <div class="text-sm text-gray-500 font-medium">Characters</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4 text-center">
+                            <div id="count-nospaces" class="text-3xl font-bold text-purple-600">0</div>
+                            <div class="text-sm text-gray-500 font-medium">Without Spaces</div>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4 text-center">
+                            <div id="count-time" class="text-3xl font-bold text-orange-600">0</div>
+                            <div class="text-sm text-gray-500 font-medium">Min Read</div>
+                        </div>
+                    </div>
+
+                    <textarea id="text-input" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y" placeholder="Type or paste your text here..."></textarea>
+                </div>
+
+                <script>
+                    const textInput = document.getElementById('text-input');
+                    textInput.addEventListener('input', function() {
+                        const text = this.value;
+                        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                        const chars = text.length;
+                        const noSpaces = text.replace(/\s/g, '').length;
+                        const readTime = Math.ceil(words / 200); // Assumes 200 words per minute
+
+                        document.getElementById('count-words').innerText = words;
+                        document.getElementById('count-chars').innerText = chars;
+                        document.getElementById('count-nospaces').innerText = noSpaces;
+                        document.getElementById('count-time').innerText = readTime;
+                    });
+                </script>
+            </div>
+
+            <!-- Image Compressor Tab -->
+            <div id="image-compressor" class="tab-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Private Image Compressor</h2>
+                    <p class="text-gray-500 mb-6 text-sm">Resize images for forms and portals locally. Your files never leave your device.</p>
+                    
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6">
+                        <input type="file" id="img-upload" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    </div>
+
+                    <div id="compression-controls" class="hidden">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Compression Level: <span id="quality-display">70%</span></label>
+                            <input type="range" id="quality-slider" min="0.1" max="1.0" step="0.05" value="0.7" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                            <div>
+                                <p class="text-xs text-gray-500">Original Size</p>
+                                <p id="original-size" class="font-bold text-gray-900">0 KB</p>
+                            </div>
+                            <i data-feather="arrow-right" class="w-5 h-5 text-gray-400"></i>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-500">New Size (Estimated)</p>
+                                <p id="compressed-size" class="font-bold text-green-600">0 KB</p>
+                            </div>
+                        </div>
+
+                        <a id="download-btn" class="w-full flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer">
+                            <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Compressed Image
+                        </a>
+                    </div>
+                </div>
+
+                <script>
+                    const imgUpload = document.getElementById('img-upload');
+                    const qualitySlider = document.getElementById('quality-slider');
+                    const qualityDisplay = document.getElementById('quality-display');
+                    const originalSize = document.getElementById('original-size');
+                    const compressedSize = document.getElementById('compressed-size');
+                    const downloadBtn = document.getElementById('download-btn');
+                    const controls = document.getElementById('compression-controls');
+                    
+                    let currentImage = new Image();
+                    let currentFileName = '';
+
+                    imgUpload.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        
+                        currentFileName = file.name;
+                        originalSize.innerText = (file.size / 1024).toFixed(2) + ' KB';
+                        controls.classList.remove('hidden');
+
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            currentImage.src = event.target.result;
+                            currentImage.onload = compress;
+                        }
+                        reader.readAsDataURL(file);
+                    });
+
+                    qualitySlider.addEventListener('input', function() {
+                        qualityDisplay.innerText = Math.round(this.value * 100) + '%';
+                        if(currentImage.src) compress();
+                    });
+
+                    function compress() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = currentImage.width;
+                        canvas.height = currentImage.height;
+                        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+
+                        const quality = parseFloat(qualitySlider.value);
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+                        // Calculate rough size of new base64 string in KB
+                        const bytes = Math.round((dataUrl.length * 3) / 4);
+                        compressedSize.innerText = (bytes / 1024).toFixed(2) + ' KB';
+
+                        downloadBtn.href = dataUrl;
+                        
+                        // Fix file extension if it was a PNG or WebP originally
+                        let newName = currentFileName.replace(/\.[^/.]+$/, "") + "_compressed.jpg";
+                        downloadBtn.download = newName;
+                    }
+                </script>
             </div>
 
         </section>
