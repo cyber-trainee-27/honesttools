@@ -35,9 +35,6 @@
                 <button onclick="switchTab('json-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="code" class="mr-3 w-5 h-5"></i> JSON Formatter
                 </button>
-                <button onclick="switchTab('text-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
-                    <i data-feather="type" class="mr-3 w-5 h-5"></i> Dummy Text
-                </button>
                 <button onclick="switchTab('image-compressor')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="image" class="w-5 h-5 mr-3"></i> Image Compressor
                 </button>
@@ -128,17 +125,7 @@
                 <pre id="json-output" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto min-h-[150px]"></pre>
             </div>
 
-            <!-- 4. Dummy Text Generator -->
-            <div id="text-tool" class="tab-content">
-                <h2 class="text-2xl font-bold mb-4">Lorem Ipsum Generator</h2>
-                <div class="flex items-center gap-4 mb-6">
-                    <label class="font-medium text-gray-700">Paragraphs:</label>
-                    <input type="number" id="paras-input" value="3" min="1" max="20" class="w-24 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    <button onclick="generateText()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">Generate</button>
-                </div>
-                <textarea id="text-output" rows="8" class="w-full p-4 text-gray-700 border border-gray-300 rounded-lg outline-none bg-gray-50" readonly></textarea>
-            </div>
-
+            
             <!-- Word Counter Tab -->
             <div id="word-counter" class="tab-content hidden max-w-3xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -412,13 +399,7 @@
             }
         }
 
-        function generateText() {
-            const paras = document.getElementById('paras-input').value;
-            const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n";
-            document.getElementById('text-output').value = text.repeat(paras).trim();
-        }
-
-        generateText();
+        
     </script>
     <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ec5f68b9ce4d410eacc4b9379efdaccf"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
