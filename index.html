@@ -377,8 +377,8 @@
                 if (!file) return;
                 
                 currentFileName = file.name;
-                // Keep PNGs as PNGs to preserve transparency (or switch to WebP if needed)
-                currentFileType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                // Convert PNGs to WebP to preserve transparency while allowing quality compression
+                currentFileType = file.type === 'image/png' ? 'image/webp' : 'image/jpeg';
                 
                 originalSize.innerText = (file.size / 1024).toFixed(2) + ' KB';
                 controls.classList.remove('hidden');
@@ -415,7 +415,7 @@
             downloadBtn.href = dataUrl;
             
             // Set correct extension dynamically
-            let ext = currentFileType === 'image/png' ? 'png' : 'jpg';
+            let ext = currentFileType === 'image/webp' ? 'webp' : 'jpg';
             let newName = currentFileName.replace(/\.[^/.]+$/, "") + "_compressed." + ext;
             downloadBtn.download = newName;
         }
