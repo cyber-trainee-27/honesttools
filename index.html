@@ -6,7 +6,6 @@
     <title>Honest Utils and Tools | 100% Free & Local</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
     <link href="./css/output.css" rel="stylesheet">
-    <!--<script src="https://cdn.tailwindcss.com"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
@@ -26,19 +25,20 @@
         
         <aside class="w-full md:w-64 flex-shrink-0">
             <nav class="flex flex-col space-y-2">
-                <button onclick="switchTab('qr-tool')" class="tab-btn active bg-blue-50 text-blue-700 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                <!-- Fixed: Passing 'event' properly to switchTab -->
+                <button onclick="switchTab(event, 'qr-tool')" class="tab-btn active bg-blue-50 text-blue-700 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="maximize" class="mr-3 w-5 h-5"></i> QR Generator
                 </button>
-                <button onclick="switchTab('image-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                <button onclick="switchTab(event, 'image-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="image" class="mr-3 w-5 h-5"></i> Image Converter
                 </button>
-                <button onclick="switchTab('json-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                <button onclick="switchTab(event, 'json-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="code" class="mr-3 w-5 h-5"></i> JSON Formatter
                 </button>
-                <button onclick="switchTab('image-compressor')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                <button onclick="switchTab(event, 'image-compressor')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="image" class="w-5 h-5 mr-3"></i> Image Compressor
                 </button>
-                <button onclick="switchTab('word-counter')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                <button onclick="switchTab(event, 'word-counter')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
                     <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Word Counter
                 </button>
             </nav>
@@ -65,7 +65,6 @@
                     <input type="text" id="qr-url" placeholder="https://yourwebsite.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4" oninput="generateDynamicQR()">
                 </div>
 
-                <!-- vCard Inputs (Now includes Website/Social Link) -->
                 <div id="input-vcard" class="qr-input-group hidden space-y-3 mb-4">
                     <input type="text" id="vcard-name" placeholder="Full Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
                     <input type="text" id="vcard-phone" placeholder="Phone Number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
@@ -100,6 +99,10 @@
             <div id="image-tool" class="tab-content">
                 <h2 class="text-2xl font-bold mb-4">Local Image Converter</h2>
                 <p class="text-gray-500 mb-6 text-sm">Convert images instantly. Your file never leaves your computer.</p>
+                
+                <!-- Added: Error handling container -->
+                <div id="convert-error" class="text-red-500 text-sm mb-4 hidden"></div>
+
                 <input type="file" id="image-input" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-6 border border-gray-200 rounded-lg p-2">
                 <div class="flex items-center gap-4 mb-6">
                     <label class="font-medium text-gray-700">Convert to:</label>
@@ -124,14 +127,12 @@
                 <div id="json-error" class="text-red-500 text-sm mb-2 hidden">Invalid JSON!</div>
                 <pre id="json-output" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto min-h-[150px]"></pre>
             </div>
-
             
-            <!-- Word Counter Tab -->
-            <div id="word-counter" class="tab-content hidden max-w-3xl mx-auto">
+            <!-- 4. Word Counter Tab -->
+            <div id="word-counter" class="tab-content max-w-3xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Word & Character Counter</h2>
                     
-                    <!-- Live Stats Bar -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="bg-blue-50 rounded-lg p-4 text-center">
                             <div id="count-words" class="text-3xl font-bold text-blue-600">0</div>
@@ -153,26 +154,10 @@
 
                     <textarea id="text-input" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y" placeholder="Type or paste your text here..."></textarea>
                 </div>
-
-                <script>
-                    const textInput = document.getElementById('text-input');
-                    textInput.addEventListener('input', function() {
-                        const text = this.value;
-                        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-                        const chars = text.length;
-                        const noSpaces = text.replace(/\s/g, '').length;
-                        const readTime = Math.ceil(words / 200); // Assumes 200 words per minute
-
-                        document.getElementById('count-words').innerText = words;
-                        document.getElementById('count-chars').innerText = chars;
-                        document.getElementById('count-nospaces').innerText = noSpaces;
-                        document.getElementById('count-time').innerText = readTime;
-                    });
-                </script>
             </div>
 
-            <!-- Image Compressor Tab -->
-            <div id="image-compressor" class="tab-content hidden max-w-3xl mx-auto">
+            <!-- 5. Image Compressor Tab -->
+            <div id="image-compressor" class="tab-content max-w-3xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Private Image Compressor</h2>
                     <p class="text-gray-500 mb-6 text-sm">Resize images for forms and portals locally. Your files never leave your device.</p>
@@ -204,61 +189,6 @@
                         </a>
                     </div>
                 </div>
-
-                <script>
-                    const imgUpload = document.getElementById('img-upload');
-                    const qualitySlider = document.getElementById('quality-slider');
-                    const qualityDisplay = document.getElementById('quality-display');
-                    const originalSize = document.getElementById('original-size');
-                    const compressedSize = document.getElementById('compressed-size');
-                    const downloadBtn = document.getElementById('download-btn');
-                    const controls = document.getElementById('compression-controls');
-                    
-                    let currentImage = new Image();
-                    let currentFileName = '';
-
-                    imgUpload.addEventListener('change', function(e) {
-                        const file = e.target.files[0];
-                        if (!file) return;
-                        
-                        currentFileName = file.name;
-                        originalSize.innerText = (file.size / 1024).toFixed(2) + ' KB';
-                        controls.classList.remove('hidden');
-
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            currentImage.src = event.target.result;
-                            currentImage.onload = compress;
-                        }
-                        reader.readAsDataURL(file);
-                    });
-
-                    qualitySlider.addEventListener('input', function() {
-                        qualityDisplay.innerText = Math.round(this.value * 100) + '%';
-                        if(currentImage.src) compress();
-                    });
-
-                    function compress() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = currentImage.width;
-                        canvas.height = currentImage.height;
-                        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-
-                        const quality = parseFloat(qualitySlider.value);
-                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-
-                        // Calculate rough size of new base64 string in KB
-                        const bytes = Math.round((dataUrl.length * 3) / 4);
-                        compressedSize.innerText = (bytes / 1024).toFixed(2) + ' KB';
-
-                        downloadBtn.href = dataUrl;
-                        
-                        // Fix file extension if it was a PNG or WebP originally
-                        let newName = currentFileName.replace(/\.[^/.]+$/, "") + "_compressed.jpg";
-                        downloadBtn.download = newName;
-                    }
-                </script>
             </div>
 
         </section>
@@ -278,15 +208,16 @@
                 <a href="https://github.com/cyber-trainee-27/honesttools/" target="_blank" class="flex items-center text-gray-600 hover:text-gray-900 transition-colors font-medium">
                     <i data-feather="github" class="w-5 h-5 mr-2"></i> Source Code
                 </a>
-                
             </div>
         </div>
     </footer>
 
+    <!-- Consolidated Main Script Tag -->
     <script>
         feather.replace();
 
-        function switchTab(tabId) {
+        // --- Tab Switching Logic (Fixed event issue) ---
+        function switchTab(event, tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => {
                 el.classList.remove('bg-blue-50', 'text-blue-700');
@@ -297,6 +228,7 @@
             event.currentTarget.classList.add('bg-blue-50', 'text-blue-700');
         }
 
+        // --- QR Code Logic ---
         const qr = new QRious({
             element: document.getElementById('qr-canvas'),
             value: 'https://github.com',
@@ -327,30 +259,20 @@
                 const websiteUrl = document.getElementById('vcard-url').value;
                 
                 qrString = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}`;
-                
-                // Only append the URL if the user typed something in
-                if (websiteUrl) {
-                    qrString += `\nURL:${websiteUrl}`;
-                }
-                
+                if (websiteUrl) qrString += `\nURL:${websiteUrl}`;
                 qrString += `\nEND:VCARD`;
             } 
             else if (type === 'wifi') {
                 const ssid = document.getElementById('wifi-ssid').value;
                 const pass = document.getElementById('wifi-pass').value;
                 const enc = document.getElementById('wifi-type').value;
-                if (enc === 'nopass') {
-                    qrString = `WIFI:T:nopass;S:${ssid};P:;;`;
-                } else {
-                    qrString = `WIFI:T:${enc};S:${ssid};P:${pass};;`;
-                }
+                qrString = enc === 'nopass' ? `WIFI:T:nopass;S:${ssid};P:;;` : `WIFI:T:${enc};S:${ssid};P:${pass};;`;
             }
             else if (type === 'email') {
                 const email = document.getElementById('email-addr').value;
                 const sub = document.getElementById('email-sub').value;
                 qrString = `mailto:${email}?subject=${encodeURIComponent(sub)}`;
             }
-
             qr.value = qrString;
         }
 
@@ -362,29 +284,49 @@
             link.click();
         }
 
+        // --- Image Converter Logic (Added ObjectURL and Error Handling) ---
         function convertImage() {
             const input = document.getElementById('image-input');
             const format = document.getElementById('format-select').value;
+            const errorDiv = document.getElementById('convert-error');
+            
+            errorDiv.classList.add('hidden');
+
             if (!input.files[0]) return alert("Please select an image first.");
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.getElementById('img-canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    const link = document.createElement('a');
-                    link.download = `converted-image.${format.split('/')[1]}`;
-                    link.href = canvas.toDataURL(format);
-                    link.click();
-                }
-                img.src = event.target.result;
+            const file = input.files[0];
+
+            if (!file.type.startsWith('image/')) {
+                errorDiv.textContent = "Selected file is not an image.";
+                errorDiv.classList.remove('hidden');
+                return;
             }
-            reader.readAsDataURL(input.files[0]);
+
+            const img = new Image();
+            img.onerror = function() {
+                errorDiv.textContent = "File is corrupt or not a valid image format.";
+                errorDiv.classList.remove('hidden');
+                URL.revokeObjectURL(img.src);
+            };
+
+            img.onload = function() {
+                const canvas = document.getElementById('img-canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const link = document.createElement('a');
+                link.download = `converted-image.${format.split('/')[1]}`;
+                link.href = canvas.toDataURL(format);
+                link.click();
+                URL.revokeObjectURL(img.src); // Free memory
+            }
+            
+            // Replaced readAsDataURL with efficient object URL
+            img.src = URL.createObjectURL(file);
         }
 
+        // --- JSON Formatter Logic ---
         function formatJSON() {
             const input = document.getElementById('json-input').value;
             const output = document.getElementById('json-output');
@@ -399,8 +341,85 @@
             }
         }
 
+        // --- Word Counter Logic ---
+        const textInput = document.getElementById('text-input');
+        if (textInput) {
+            textInput.addEventListener('input', function() {
+                const text = this.value;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const noSpaces = text.replace(/\s/g, '').length;
+                const readTime = Math.ceil(words / 200);
+
+                document.getElementById('count-words').innerText = words;
+                document.getElementById('count-chars').innerText = chars;
+                document.getElementById('count-nospaces').innerText = noSpaces;
+                document.getElementById('count-time').innerText = readTime;
+            });
+        }
+
+        // --- Image Compressor Logic (Fixed PNG issue & Memory usage) ---
+        const imgUpload = document.getElementById('img-upload');
+        const qualitySlider = document.getElementById('quality-slider');
+        const qualityDisplay = document.getElementById('quality-display');
+        const originalSize = document.getElementById('original-size');
+        const compressedSize = document.getElementById('compressed-size');
+        const downloadBtn = document.getElementById('download-btn');
+        const controls = document.getElementById('compression-controls');
         
+        let currentCompressImage = new Image();
+        let currentFileName = '';
+        let currentFileType = ''; // Used to prevent black backgrounds on PNGs
+
+        if (imgUpload) {
+            imgUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                currentFileName = file.name;
+                // Keep PNGs as PNGs to preserve transparency (or switch to WebP if needed)
+                currentFileType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                
+                originalSize.innerText = (file.size / 1024).toFixed(2) + ' KB';
+                controls.classList.remove('hidden');
+
+                // Using createObjectURL instead of FileReader
+                currentCompressImage.src = URL.createObjectURL(file);
+                currentCompressImage.onload = function() {
+                    compressImage();
+                    URL.revokeObjectURL(currentCompressImage.src); // Free memory once loaded
+                };
+            });
+        }
+
+        if (qualitySlider) {
+            qualitySlider.addEventListener('input', function() {
+                qualityDisplay.innerText = Math.round(this.value * 100) + '%';
+                if(currentCompressImage.width) compressImage();
+            });
+        }
+
+        function compressImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = currentCompressImage.width;
+            canvas.height = currentCompressImage.height;
+            ctx.drawImage(currentCompressImage, 0, 0, canvas.width, canvas.height);
+
+            const quality = parseFloat(qualitySlider.value);
+            const dataUrl = canvas.toDataURL(currentFileType, quality);
+
+            const bytes = Math.round((dataUrl.length * 3) / 4);
+            compressedSize.innerText = (bytes / 1024).toFixed(2) + ' KB';
+
+            downloadBtn.href = dataUrl;
+            
+            // Set correct extension dynamically
+            let ext = currentFileType === 'image/png' ? 'png' : 'jpg';
+            let newName = currentFileName.replace(/\.[^/.]+$/, "") + "_compressed." + ext;
+            downloadBtn.download = newName;
+        }
     </script>
-    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ec5f68b9ce4d410eacc4b9379efdaccf"}'></script><!-- End Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ec5f68b9ce4d410eacc4b9379efdaccf"}'></script>
 </body>
 </html>
