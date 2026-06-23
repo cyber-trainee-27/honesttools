@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honest Tools | 100% Free & Local</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-gray-200 py-6 text-center shadow-sm">
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Honest <span class="text-blue-600">Tools.</span></h1>
+        <p class="text-gray-500 mt-2 font-medium">Fast, free utilities. Processed directly on your device. Nothing is saved or sent.</p>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto p-6 mt-8 flex flex-col md:flex-row gap-8">
+        
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <nav class="flex flex-col space-y-2">
+                <button onclick="switchTab('qr-tool')" class="tab-btn active bg-blue-50 text-blue-700 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="maximize" class="mr-3 w-5 h-5"></i> QR Generator
+                </button>
+                <button onclick="switchTab('image-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="image" class="mr-3 w-5 h-5"></i> Image Converter
+                </button>
+                <button onclick="switchTab('json-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="code" class="mr-3 w-5 h-5"></i> JSON Formatter
+                </button>
+                <button onclick="switchTab('text-tool')" class="tab-btn text-gray-600 hover:bg-gray-100 font-semibold flex items-center p-3 rounded-lg transition-colors">
+                    <i data-feather="type" class="mr-3 w-5 h-5"></i> Dummy Text
+                </button>
+            </nav>
+        </aside>
+
+        <section class="flex-grow bg-white p-8 rounded-xl shadow-sm border border-gray-100 min-h-[400px]">
+            
+            <!-- 1. Universal QR Code Generator -->
+            <div id="qr-tool" class="tab-content active">
+                <h2 class="text-2xl font-bold mb-4">Universal QR Generator</h2>
+                <p class="text-gray-500 mb-6 text-sm">Generate static, permanent QR codes. 100% private.</p>
+                
+                <div class="mb-4">
+                    <label class="font-medium text-gray-700">QR Code Type:</label>
+                    <select id="qr-type" onchange="updateQRInputs()" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 mt-2 bg-gray-50">
+                        <option value="url">Link / URL</option>
+                        <option value="vcard">Contact Card (vCard)</option>
+                        <option value="wifi">WiFi Network</option>
+                        <option value="email">Send Email</option>
+                    </select>
+                </div>
+
+                <div id="input-url" class="qr-input-group">
+                    <input type="text" id="qr-url" placeholder="https://yourwebsite.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4" oninput="generateDynamicQR()">
+                </div>
+
+                <!-- vCard Inputs (Now includes Website/Social Link) -->
+                <div id="input-vcard" class="qr-input-group hidden space-y-3 mb-4">
+                    <input type="text" id="vcard-name" placeholder="Full Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <input type="text" id="vcard-phone" placeholder="Phone Number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <input type="email" id="vcard-email" placeholder="Email Address" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <input type="url" id="vcard-url" placeholder="Website or Social Link (e.g., LinkedIn)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                </div>
+
+                <div id="input-wifi" class="qr-input-group hidden space-y-3 mb-4">
+                    <input type="text" id="wifi-ssid" placeholder="Network Name (SSID)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <input type="text" id="wifi-pass" placeholder="Password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <select id="wifi-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50" onchange="generateDynamicQR()">
+                        <option value="WPA">WPA/WPA2 Security</option>
+                        <option value="WEP">WEP Security</option>
+                        <option value="nopass">No Password</option>
+                    </select>
+                </div>
+
+                <div id="input-email" class="qr-input-group hidden space-y-3 mb-4">
+                    <input type="email" id="email-addr" placeholder="Recipient Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                    <input type="text" id="email-sub" placeholder="Subject Line" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" oninput="generateDynamicQR()">
+                </div>
+                
+                <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-lg p-8 bg-white">
+                    <canvas id="qr-canvas" class="shadow-sm mb-4 border border-gray-100 rounded-lg p-2 bg-white"></canvas>
+                    <button onclick="downloadQR()" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                        <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Image
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Image Converter -->
+            <div id="image-tool" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4">Local Image Converter</h2>
+                <p class="text-gray-500 mb-6 text-sm">Convert images instantly. Your file never leaves your computer.</p>
+                <input type="file" id="image-input" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-6 border border-gray-200 rounded-lg p-2">
+                <div class="flex items-center gap-4 mb-6">
+                    <label class="font-medium text-gray-700">Convert to:</label>
+                    <select id="format-select" class="p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <button onclick="convertImage()" class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors">
+                    <i data-feather="refresh-cw" class="w-4 h-4 mr-2"></i> Convert & Download
+                </button>
+                <canvas id="img-canvas" class="hidden"></canvas>
+            </div>
+
+            <!-- 3. JSON Formatter -->
+            <div id="json-tool" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4">JSON Formatter</h2>
+                <p class="text-gray-500 mb-6 text-sm">Paste minified JSON to make it readable. Validates instantly.</p>
+                <textarea id="json-input" rows="5" class="w-full p-3 font-mono text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4" placeholder='{"paste":"your json here"}'></textarea>
+                <button onclick="formatJSON()" class="mb-4 bg-gray-800 hover:bg-gray-900 text-white py-2 px-4 rounded-lg font-medium transition-colors">Format JSON</button>
+                <div id="json-error" class="text-red-500 text-sm mb-2 hidden">Invalid JSON!</div>
+                <pre id="json-output" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto min-h-[150px]"></pre>
+            </div>
+
+            <!-- 4. Dummy Text Generator -->
+            <div id="text-tool" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4">Lorem Ipsum Generator</h2>
+                <div class="flex items-center gap-4 mb-6">
+                    <label class="font-medium text-gray-700">Paragraphs:</label>
+                    <input type="number" id="paras-input" value="3" min="1" max="20" class="w-24 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    <button onclick="generateText()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">Generate</button>
+                </div>
+                <textarea id="text-output" rows="8" class="w-full p-4 text-gray-700 border border-gray-300 rounded-lg outline-none bg-gray-50" readonly></textarea>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="mt-auto bg-white border-t border-gray-200 py-10 text-center">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="inline-flex items-center justify-center p-3 bg-green-50 rounded-full mb-4">
+                <i data-feather="shield" class="text-green-600 w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Why is this free? Where's the catch?</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                Most utility websites today are traps. They hold your files hostage, inject hidden redirects, or force you into subscriptions. 
+                <strong>Honest Tools</strong> is built differently. Every tool here uses your browser's native capabilities. Your files never touch a server. There are no paywalls and no tracking cookies. <em>(We use a privacy-first, cookieless counter just to see how many people visit, but you remain 100% anonymous).</em>
+            </p>
+            <div class="flex items-center justify-center space-x-6">
+                <a href="https://github.com/yourusername/honest-tools" target="_blank" class="flex items-center text-gray-600 hover:text-gray-900 transition-colors font-medium">
+                    <i data-feather="github" class="w-5 h-5 mr-2"></i> Source Code
+                </a>
+                
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        feather.replace();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-blue-50', 'text-blue-700');
+                el.classList.add('text-gray-600');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.remove('text-gray-600');
+            event.currentTarget.classList.add('bg-blue-50', 'text-blue-700');
+        }
+
+        const qr = new QRious({
+            element: document.getElementById('qr-canvas'),
+            value: 'https://github.com',
+            size: 250,
+            level: 'H'
+        });
+
+        function updateQRInputs() {
+            document.querySelectorAll('.qr-input-group').forEach(el => {
+                el.classList.add('hidden');
+            });
+            const type = document.getElementById('qr-type').value;
+            document.getElementById(`input-${type}`).classList.remove('hidden');
+            generateDynamicQR();
+        }
+
+        function generateDynamicQR() {
+            const type = document.getElementById('qr-type').value;
+            let qrString = '';
+
+            if (type === 'url') {
+                qrString = document.getElementById('qr-url').value || 'https://github.com';
+            } 
+            else if (type === 'vcard') {
+                const name = document.getElementById('vcard-name').value;
+                const phone = document.getElementById('vcard-phone').value;
+                const email = document.getElementById('vcard-email').value;
+                const websiteUrl = document.getElementById('vcard-url').value;
+                
+                qrString = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}`;
+                
+                // Only append the URL if the user typed something in
+                if (websiteUrl) {
+                    qrString += `\nURL:${websiteUrl}`;
+                }
+                
+                qrString += `\nEND:VCARD`;
+            } 
+            else if (type === 'wifi') {
+                const ssid = document.getElementById('wifi-ssid').value;
+                const pass = document.getElementById('wifi-pass').value;
+                const enc = document.getElementById('wifi-type').value;
+                if (enc === 'nopass') {
+                    qrString = `WIFI:T:nopass;S:${ssid};P:;;`;
+                } else {
+                    qrString = `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+                }
+            }
+            else if (type === 'email') {
+                const email = document.getElementById('email-addr').value;
+                const sub = document.getElementById('email-sub').value;
+                qrString = `mailto:${email}?subject=${encodeURIComponent(sub)}`;
+            }
+
+            qr.value = qrString;
+        }
+
+        function downloadQR() {
+            const canvas = document.getElementById('qr-canvas');
+            const link = document.createElement('a');
+            link.download = 'honest-qr.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function convertImage() {
+            const input = document.getElementById('image-input');
+            const format = document.getElementById('format-select').value;
+            if (!input.files[0]) return alert("Please select an image first.");
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.getElementById('img-canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const link = document.createElement('a');
+                    link.download = `converted-image.${format.split('/')[1]}`;
+                    link.href = canvas.toDataURL(format);
+                    link.click();
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function formatJSON() {
+            const input = document.getElementById('json-input').value;
+            const output = document.getElementById('json-output');
+            const error = document.getElementById('json-error');
+            try {
+                const parsed = JSON.parse(input);
+                output.textContent = JSON.stringify(parsed, null, 4);
+                error.classList.add('hidden');
+            } catch (e) {
+                error.classList.remove('hidden');
+                output.textContent = '';
+            }
+        }
+
+        function generateText() {
+            const paras = document.getElementById('paras-input').value;
+            const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n";
+            document.getElementById('text-output').value = text.repeat(paras).trim();
+        }
+
+        generateText();
+    </script>
+</body>
+</html>
